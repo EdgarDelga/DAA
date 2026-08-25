@@ -3,81 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Navegador de Proyectos DAA</title>
+  <title>Portafolio DAA - EdgarDelga</title>
   <style>
     :root {
-      --bg: #0d1117;
-      --text: #c9d1d9;
-      --border: #30363d;
-      --link: #58a6ff;
-      --folder: #8b949e;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --border: #334155;
+      --link: #38bdf8;
+      --folder: #818cf8;
+      --accent: #10b981;
     }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      padding: 40px;
+      padding: 40px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin: 0;
     }
+
+    h1 {
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+
+    p.subtitle {
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
+
     .contenedor {
       width: 100%;
       max-width: 800px;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      background-color: #161b22;
+      border-radius: 8px;
+      background-color: var(--card-bg);
       overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
+
     .header {
-      background-color: #21262d;
+      background-color: #0f172a;
       padding: 16px;
       border-bottom: 1px solid var(--border);
       display: flex;
       gap: 15px;
       align-items: center;
     }
+
     button {
-      background-color: #238636;
-      color: white;
+      background-color: var(--accent);
+      color: #000;
       border: none;
-      padding: 5px 12px;
+      padding: 8px 16px;
       border-radius: 6px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: bold;
+      transition: opacity 0.3s;
     }
+
+    button:hover:not(:disabled) { opacity: 0.8; }
     button:disabled {
       background-color: var(--border);
+      color: #64748b;
       cursor: not-allowed;
     }
+
     .lista-archivos {
       list-style: none;
       padding: 0;
       margin: 0;
     }
+
     .item {
-      padding: 12px 16px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
+      transition: background 0.2s;
     }
+
     .item:last-child { border-bottom: none; }
-    .item:hover { background-color: #1f2428; }
-    .icono { font-size: 1.2em; }
-    .nombre { cursor: pointer; color: var(--text); text-decoration: none; }
+    .item:hover { background-color: #334155; }
+    
+    .info-archivo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icono { font-size: 1.5em; }
+    
+    .nombre { 
+      cursor: pointer; 
+      color: var(--text); 
+      text-decoration: none; 
+      font-weight: 500;
+      font-size: 16px;
+    }
+
     .nombre.dir { color: var(--link); font-weight: bold; }
     .nombre.dir:hover { text-decoration: underline; }
+
+    /* Botón para abrir la tarea directamente en Pages */
+    .btn-visitar {
+      background-color: transparent;
+      border: 1px solid var(--link);
+      color: var(--link);
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+    .btn-visitar:hover {
+      background-color: var(--link);
+      color: #000;
+    }
   </style>
 </head>
 <body>
 
-  <h2>Repositorio: EdgarDelga / DAA</h2>
+  <h1>Diseño y Análisis de Algoritmos</h1>
+  <p class="subtitle">Repositorio de Tareas | Edgar Delgadillo</p>
   
   <div class="contenedor">
     <div class="header">
       <button id="btn-atras" onclick="irAtras()" disabled>⬅ Volver</button>
-      <span id="ruta-actual">/ (Raíz)</span>
+      <span id="ruta-actual" style="font-family: monospace; font-size: 16px;">/ (Raíz)</span>
     </div>
     <ul id="lista-archivos" class="lista-archivos">
       <!-- Los archivos se inyectarán aquí -->
@@ -85,34 +142,34 @@
   </div>
 
   <script>
-    // Configuración del repositorio
     const owner = 'EdgarDelga';
     const repo = 'DAA';
-    
-    // Pila para guardar el historial de navegación
     let historialRutas = ['']; 
 
-    // Función principal para obtener datos de la API de GitHub
     async function cargarDirectorio(ruta = '') {
       const url = `https://api.github.com/repos/${owner}/${repo}/contents/${ruta}`;
       const contenedorLista = document.getElementById('lista-archivos');
       const labelRuta = document.getElementById('ruta-actual');
       const btnAtras = document.getElementById('btn-atras');
 
-      contenedorLista.innerHTML = '<li class="item">Cargando...</li>';
+      contenedorLista.innerHTML = '<li class="item"><div class="info-archivo">Cargando repositorio...</div></li>';
       
       try {
         const respuesta = await fetch(url);
-        if (!respuesta.ok) throw new Error("Error al cargar el repositorio");
+        if (!respuesta.ok) throw new Error("No se pudo cargar el repositorio");
         
         const datos = await respuesta.json();
         
-        // Actualizar UI
         labelRuta.textContent = ruta === '' ? '/ (Raíz)' : `/${ruta}`;
         btnAtras.disabled = historialRutas.length <= 1;
         contenedorLista.innerHTML = '';
 
-        // Renderizar cada archivo/carpeta
+        // Ordenar para que las carpetas salgan primero
+        datos.sort((a, b) => {
+          if (a.type === b.type) return a.name.localeCompare(b.name);
+          return a.type === 'dir' ? -1 : 1;
+        });
+
         datos.forEach(item => {
           const li = document.createElement('li');
           li.className = 'item';
@@ -120,29 +177,36 @@
           const esCarpeta = item.type === 'dir';
           const icono = esCarpeta ? '📁' : '📄';
           
-          // Si es carpeta, al hacer clic navega más profundo. Si es archivo, abre en GitHub.
+          // Acción al hacer clic en el nombre
           const accion = esCarpeta 
             ? `onclick="navegarA('${item.path}')"` 
             : `href="${item.html_url}" target="_blank"`;
             
           const etiqueta = esCarpeta ? 'span' : 'a';
 
+          // Botón extra por si la carpeta tiene un index.html y quieres ver la página en vivo
+          const botonVerEnVivo = esCarpeta 
+            ? `<a href="/DAA/${item.path}/" class="btn-visitar">Ver Web</a>`
+            : '';
+
           li.innerHTML = `
-            <span class="icono">${icono}</span>
-            <${etiqueta} class="nombre ${esCarpeta ? 'dir' : 'file'}" ${accion}>
-              ${item.name}
-            </${etiqueta}>
+            <div class="info-archivo">
+              <span class="icono">${icono}</span>
+              <${etiqueta} class="nombre ${esCarpeta ? 'dir' : 'file'}" ${accion}>
+                ${item.name}
+              </${etiqueta}>
+            </div>
+            ${botonVerEnVivo}
           `;
           
           contenedorLista.appendChild(li);
         });
 
       } catch (error) {
-        contenedorLista.innerHTML = `<li class="item" style="color: #ff7b72;">Error: ${error.message}</li>`;
+        contenedorLista.innerHTML = `<li class="item" style="color: #ef4444;">Error: ${error.message}</li>`;
       }
     }
 
-    // Funciones de navegación
     function navegarA(nuevaRuta) {
       historialRutas.push(nuevaRuta);
       cargarDirectorio(nuevaRuta);
@@ -150,13 +214,12 @@
 
     function irAtras() {
       if (historialRutas.length > 1) {
-        historialRutas.pop(); // Sacamos la ruta actual
+        historialRutas.pop(); 
         const rutaAnterior = historialRutas[historialRutas.length - 1];
         cargarDirectorio(rutaAnterior);
       }
     }
 
-    // Iniciar la aplicación cargando la raíz
     cargarDirectorio();
   </script>
 </body>
