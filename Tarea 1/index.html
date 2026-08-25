@@ -1,13 +1,160 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
+    <title>Visualizador de Nodos</title>
+    <style>
+      :root {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --code-bg: #0d1117;
+        --text-main: #f8fafc;
+        --accent: #10b981; 
+      }
+
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        margin: 0;
+      }
+
+      img {
+        max-width: 100%;
+        width: 700px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        margin-bottom: 30px;
+        border: 2px solid #334155;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: var(--accent);
+        width: 100%;
+        max-width: 700px;
+      }
+
+      /* --- Estilos para la caja de Código --- */
+      .editor-container {
+        width: 100%;
+        max-width: 700px;
+        background-color: var(--code-bg);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        margin-bottom: 30px;
+        border: 1px solid #30363d;
+      }
+
+      .editor-header {
+        background-color: #161b22;
+        padding: 10px 15px;
+        display: flex;
+        gap: 8px;
+        border-bottom: 1px solid #30363d;
+      }
+
+      /* Los 3 puntitos estilo Mac */
+      .dot { width: 12px; height: 12px; border-radius: 50%; }
+      .dot.red { background-color: #ff5f56; }
+      .dot.yellow { background-color: #ffbd2e; }
+      .dot.green { background-color: #27c93f; }
+
+      pre {
+        margin: 0;
+        padding: 20px;
+        overflow-x: auto; /* Permite scroll horizontal si el código es largo */
+      }
+
+      code {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 14px;
+        color: #e6edf3;
+        line-height: 1.5;
+      }
+
+      /* --- Estilos para el Resultado --- */
+      #resultado {
+        background-color: var(--card-bg);
+        padding: 20px;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 660px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 16px;
+        line-height: 1.6;
+        border-left: 5px solid var(--accent);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+    </style>
   </head>
   <body>
-    <h1 id="valorh1">ola</h1>
-  </body>
+    
+    <img src="/imagen.png" alt="Diagrama de Nodos">
+    
+    <h1>Código JavaScript:</h1>
+    
+    <!-- Contenedor del código fuente -->
+    <div class="editor-container">
+      <div class="editor-header">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+<pre><code>// Crear a los nodos con una estructura base (Sus apuntadores).
+class Nodo {
+  constructor(v) {
+    this.v = v;
+    this.ind1 = null;
+    this.ind2 = null;
+    this.ind3 = null;
+  }
+}
 
-  <script src="/index.js"></script>
+// Definir a todos los nodos y sus valores
+const head = new Nodo(20);
+const nodo23 = new Nodo(23);
+const nodo19 = new Nodo(19);
+const nodo57 = new Nodo(57);
+const nodo67 = new Nodo(67);
+const nodo99 = new Nodo(99);
+
+// Definimos hacia donde van los apuntadores
+head.ind1 = nodo23;
+head.ind2 = nodo19;
+
+// Nodo 23
+nodo23.ind2 = nodo57;
+
+// Nodo 19
+nodo19.ind3 = nodo67;
+
+// Nodo 67
+nodo67.ind2 = nodo99;
+
+// Seleccionamos la etiqueta p usando su ID
+const parrafoResultado = document.getElementById("resultado");
+
+// Le inyectamos el texto usando Template Literals
+parrafoResultado.innerHTML = \`
+  &lt;strong&gt;Búsqueda de Nodos:&lt;/strong&gt;&lt;br&gt;&lt;br&gt;
+  El nodo 99 es: &lt;span style="color: #10b981;"&gt;\${head.ind2.ind3.ind2.v}&lt;/span&gt;. Es decir head.ind2.ind3.ind2.v &lt;br&gt;
+  El nodo 57 es: &lt;span style="color: #10b981;"&gt;\${head.ind1.ind2.v}&lt;/span&gt;. Es decir head.ind1.ind2.v
+\`;</code></pre>
+    </div>
+
+    <h1>Resultado en ejecución:</h1>
+    <!-- Aquí tu index.js inyectará el resultado real -->
+    <p id="resultado"></p>
+
+    <!-- Tu script externo se encarga de hacer la lógica y pintar en #resultado -->
+    <script src="/index.js"></script>
+  </body>
 </html>
