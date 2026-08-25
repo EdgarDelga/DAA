@@ -29,7 +29,12 @@ nodo19.ind3 = nodo67;
 // Nodo 67
 nodo67.ind2 = nodo99;
 
-// Usando Template Literals (comillas invertidas)
-alert(`El nodo 99 es: ${head.ind2.ind3.ind2.v}. Es decir head.ind2.ind3.ind2.v`);
+// Seleccionamos la etiqueta <p> usando su ID
+const parrafoResultado = document.getElementById("resultado");
 
-alert(`El nodo 57 es: ${head.ind1.ind2.v}. Es decir head.ind1.ind2.v`);
+// Le inyectamos el texto usando Template Literals
+parrafoResultado.innerHTML = `
+  <strong>Búsqueda de Nodos:</strong><br><br>
+  El nodo 99 es: <span style="color: #10b981;">${head.ind2.ind3.ind2.v}</span>. Es decir head.ind2.ind3.ind2.v <br>
+  El nodo 57 es: <span style="color: #10b981;">${head.ind1.ind2.v}</span>. Es decir head.ind1.ind2.v
+`;
